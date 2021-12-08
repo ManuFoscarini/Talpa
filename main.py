@@ -1,11 +1,17 @@
 from tkinter import *
+from tkinter import ttk
+ 
+
+master = Tk()
+ 
+master.geometry("200x200")
 
 
 class ActorPlayer:
     def __init__(self):
         self.mainWindow = Tk()
         self.fillMainWindow()
-        self.mainWindow.mainloop()
+        #self.mainWindow.mainloop()
 
     def fillMainWindow(self):
         self.mainWindow.title("Talpa")
@@ -55,5 +61,9 @@ class ActorPlayer:
             label['imag'] = self.empty
             self.whiteTurn = True
 
+ttk.Button(master,
+             text ="Click to open a new window",
+             command = ActorPlayer).pack()
 
-ActorPlayer()
+mainloop()
+
