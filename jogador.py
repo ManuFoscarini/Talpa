@@ -20,5 +20,8 @@ class Jogador():
     def getNome(self):
         return self.nome
         
+    def getCor(self):
+        return self.cor
+        
     def inverteTurno(self):
         self.turno = not(self.turno)
