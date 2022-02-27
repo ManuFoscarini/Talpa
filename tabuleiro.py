@@ -64,6 +64,8 @@ class Tabuleiro():
         self.setMensagem(0)
         self.player1.setTurno(True)
         self.player2.setTurno(False)
+        self.player1.setVencedor(False)
+        self.player2.setVencedor(False)
         
     def colocaPosicoesEstadoInicial(self):
         for i in range(8):
@@ -85,7 +87,7 @@ class Tabuleiro():
         elif codigo == 1:
             self.mensagem = "Posicao Invalida"
         elif codigo == 2:
-            self.mensagem = "x venceu a partida"
+            self.mensagem = f"{self.jogadorDaVez().getNome()} venceu a partida."
         #mais opcoes serao adicionadas aqui
     
     def mesmaCor(self, linha, coluna):
@@ -104,8 +106,68 @@ class Tabuleiro():
         self.posicoes[linha][coluna].setOcupante(None)
     
     def VerificarVencedor(self):
-        pass
+        listaPosicoes = []
+        matrizAuxiliar = []
+        for i in range(8):
+            matrizAuxiliar.append([0,0,0,0,0,0,0,0])
+        for i in range(8):
+            if not(self.posicoes[0][i].ocupada()):
+                listaPosicoes.append([0, i])
+        while(len(listaPosicoes) > 0):
+            posicaoAtual = listaPosicoes.pop(0)
+            adjacentes = [[posicaoAtual[0]-1, posicaoAtual[1]], [posicaoAtual[0]+1, posicaoAtual[1]], [posicaoAtual[0], posicaoAtual[1]-1],[posicaoAtual[0], posicaoAtual[1]+1]]
+            for i in range(4):
+                pos0 = adjacentes[i][0]
+                pos1 = adjacentes[i][1]
+                if  (0 <= pos0 <= 7) and (0 <= pos1 <= 7):
+                    if (not(self.posicoes[pos0][pos1].ocupada()) and matrizAuxiliar[pos0][pos1] == 0):
+                        listaPosicoes.append([pos0, pos1])
+                        matrizAuxiliar[pos0][pos1] = 1
+        for i in range(8):
+            if matrizAuxiliar[7][i] == 1:
+                vencedor1 = True
+                break
+        for i in range(8):
+            for j in range(8):
+                matrizAuxiliar[i][j] = 0
+        listaPosicoes = []
+        for i in range(8):
+            if not(self.posicoes[i][0].ocupada()):
+                listaPosicoes.append([i, 0])
+        while(len(listaPosicoes) > 0):
+            posicaoAtual = listaPosicoes.pop(0)
+            adjacentes = [[posicaoAtual[0]-1, posicaoAtual[1]], [posicaoAtual[0]+1, posicaoAtual[1]], [posicaoAtual[0], posicaoAtual[1]-1],[posicaoAtual[0], posicaoAtual[1]+1]]
+            for i in range(4):
+                pos0 = adjacentes[i][0]
+                pos1 = adjacentes[i][1]
+                if  (0 <= pos0 <= 7) and (0 <= pos1 <= 7):
+                    if (not(self.posicoes[pos0][pos1].ocupada()) and matrizAuxiliar[pos0][pos1] == 0):
+                        listaPosicoes.append([pos0, pos1])
+                        matrizAuxiliar[pos0][pos1] = 1
+        for i in range(8):
+            if matrizAuxiliar[i][7] == 1:
+                vencedor2 = True
+                break
+        
+        if vencedor1 and vencedor2:
+            self.jogadorDaVez().setVencedor(True)
+        elif vencedor1 and not(vencedor2):
+            self.player1.setVencedor(True)
+        elif not(vencedor1) and vencedor2:
+            self.player2.setVencedor(True)
+
+        return (vencedor1 or vencedor2)
+
 
     def impossivelComer(self):
-        pass
-
+        for i in range(8):
+            for j in range(8):
+                posicaoAtual = [i, j]
+                adjacentes = [[posicaoAtual[0]-1, posicaoAtual[1]], [posicaoAtual[0]+1, posicaoAtual[1]], [posicaoAtual[0], posicaoAtual[1]-1],[posicaoAtual[0], posicaoAtual[1]+1]]
+                for i in range(4):
+                    pos0 = adjacentes[i][0]
+                    pos1 = adjacentes[i][1]
+                    if  (0 <= pos0 <= 7) and (0 <= pos1 <= 7):
+                        if (self.posicoes[pos0][pos1].ocupada() and self.posicoes[pos0][pos1] != self.jogadorDaVez()):
+                            return False
+        return True
