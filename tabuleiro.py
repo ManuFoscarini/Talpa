@@ -13,6 +13,49 @@ class Tabuleiro():
         self.partidaEmAndamento = True
         self.jogadaEmAndamento = False
         self.pecaRetirada = None
+    
+    def SelecionaPosicao(self, linha, coluna):
+        if self.partidaEmAndamento:
+            self.procederLance(linha, coluna)
+        else:
+           self.ColocarJogoEstadoInicial()
+    
+    def procederLance(self, linha, coluna):
+        if not(self.jogadaEmAndamento):
+            if self.mesmaCor(linha, coluna):
+                self.setMensagem(0)
+                if self.impossivelComer():
+                    self.retiraPeca(linha, coluna)
+                    if self.VerificarVencedor():
+                        self.setMensagem(2)
+                        self.partidaEmAndamento = False
+                    else:
+                        self.player1.inverteTurno()
+                        self.player2.inverteTurno()
+                else:
+                    self.retiraPeca(linha, coluna)
+                    self.pecaRetirada = [linha, coluna]
+                    self.jogadaEmAndamento = True
+
+            else:
+                self.setMensagem(1)
+        else:
+            if self.adjacente(linha, coluna):
+                if self.mesmaCor(linha, coluna):
+                    self.jogadaEmAndamento = False
+                    self.posicoes[self.pecaRetirada[0]][self.pecaRetirada[1]].setOcupante(self.jogadorDaVez())
+                else:
+                    self.posicoes[linha][coluna].setOcupante(self.jogadorDaVez())
+                    if self.VerificarVencedor():
+                        self.setMensagem(2)
+                        self.partidaEmAndamento = False
+                    else:
+                        self.jogadaEmAndamento = False
+                        self.player1.inverteTurno()
+                        self.player2.inverteTurno()
+            else:
+                self.jogadaEmAndamento = False
+                self.posicoes[self.pecaRetirada[0]][self.pecaRetirada[1]].setOcupante(self.jogadorDaVez())
 
     def ColocarJogoEstadoInicial(self):
         self.colocaPosicoesEstadoInicial()
@@ -25,7 +68,7 @@ class Tabuleiro():
     def colocaPosicoesEstadoInicial(self):
         for i in range(8):
             for j in range(8):
-                if i+j % 2 == 0:
+                if (i+j) % 2 == 0:
                     self.posicoes[i][j].setOcupante(self.player1)
                 else:
                     self.posicoes[i][j].setOcupante(self.player2)
@@ -39,6 +82,10 @@ class Tabuleiro():
     def setMensagem(self, codigo):
         if codigo == 0:
             self.mensagem = "O jogo esta em andamento"
+        elif codigo == 1:
+            self.mensagem = "Posicao Invalida"
+        elif codigo == 2:
+            self.mensagem = "x venceu a partida"
         #mais opcoes serao adicionadas aqui
     
     def mesmaCor(self, linha, coluna):
@@ -52,3 +99,13 @@ class Tabuleiro():
             return self.player1
         else:
             return self.player2
+    
+    def retiraPeca(self, linha, coluna):
+        self.posicoes[linha][coluna].setOcupante(None)
+    
+    def VerificarVencedor(self):
+        pass
+
+    def impossivelComer(self):
+        pass
+
