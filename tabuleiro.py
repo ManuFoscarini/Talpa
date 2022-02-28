@@ -9,8 +9,8 @@ class Tabuleiro():
         self.posicoes = [[], [], [], [], [], [], [], []]
         for i in range(8):
             for j in range(8):
-                self.posicoes[i][j] = Posicao()
-        self.partidaEmAndamento = True
+                self.posicoes[i].append(Posicao())
+        self.partidaEmAndamento = False
         self.jogadaEmAndamento = False
         self.pecaRetirada = None
     
@@ -45,11 +45,13 @@ class Tabuleiro():
                     self.jogadaEmAndamento = False
                     self.posicoes[self.pecaRetirada[0]][self.pecaRetirada[1]].setOcupante(self.jogadorDaVez())
                 else:
+                    print("Doidera")
                     self.posicoes[linha][coluna].setOcupante(self.jogadorDaVez())
                     if self.VerificarVencedor():
                         self.setMensagem(2)
                         self.partidaEmAndamento = False
                     else:
+                        print("locuucra")
                         self.jogadaEmAndamento = False
                         self.player1.inverteTurno()
                         self.player2.inverteTurno()
@@ -87,11 +89,11 @@ class Tabuleiro():
         elif codigo == 1:
             self.mensagem = "Posicao Invalida"
         elif codigo == 2:
-            self.mensagem = f"{self.jogadorDaVez().getNome()} venceu a partida."
+            self.mensagem = f"{self.getVencedor().getNome()} venceu a partida."
         #mais opcoes serao adicionadas aqui
     
     def mesmaCor(self, linha, coluna):
-        return self.posicoes[linha][coluna].getOcupante().getCor() == self.jogadorDaVez().getCor()
+        return self.posicoes[linha][coluna].ocupada() and  self.posicoes[linha][coluna].getOcupante().getCor() == self.jogadorDaVez().getCor()
     
     def adjacente(self, linha, coluna):
         return abs(self.pecaRetirada[0] - linha) + abs(self.pecaRetirada[1] - coluna) == 1
@@ -106,12 +108,15 @@ class Tabuleiro():
         self.posicoes[linha][coluna].setOcupante(None)
     
     def VerificarVencedor(self):
+        vencedor1 = False
+        vencedor2 = False
         listaPosicoes = []
         matrizAuxiliar = []
         for i in range(8):
             matrizAuxiliar.append([0,0,0,0,0,0,0,0])
         for i in range(8):
             if not(self.posicoes[0][i].ocupada()):
+                print([0,i])
                 listaPosicoes.append([0, i])
         while(len(listaPosicoes) > 0):
             posicaoAtual = listaPosicoes.pop(0)
@@ -125,6 +130,7 @@ class Tabuleiro():
                         matrizAuxiliar[pos0][pos1] = 1
         for i in range(8):
             if matrizAuxiliar[7][i] == 1:
+                print("Vencedor1")
                 vencedor1 = True
                 break
         for i in range(8):
@@ -133,6 +139,7 @@ class Tabuleiro():
         listaPosicoes = []
         for i in range(8):
             if not(self.posicoes[i][0].ocupada()):
+                print([i, 0])
                 listaPosicoes.append([i, 0])
         while(len(listaPosicoes) > 0):
             posicaoAtual = listaPosicoes.pop(0)
@@ -146,11 +153,15 @@ class Tabuleiro():
                         matrizAuxiliar[pos0][pos1] = 1
         for i in range(8):
             if matrizAuxiliar[i][7] == 1:
+                print("Vencedor2")
                 vencedor2 = True
                 break
         
         if vencedor1 and vencedor2:
-            self.jogadorDaVez().setVencedor(True)
+            if self.player1 == self.jogadorDaVez():
+                self.player2.setVencedor(True)
+            else:
+                self.player1.setVencedor(True)
         elif vencedor1 and not(vencedor2):
             self.player1.setVencedor(True)
         elif not(vencedor1) and vencedor2:
@@ -171,3 +182,20 @@ class Tabuleiro():
                         if (self.posicoes[pos0][pos1].ocupada() and self.posicoes[pos0][pos1] != self.jogadorDaVez()):
                             return False
         return True
+
+    def getMensagem(self):
+        return self.mensagem
+    
+    def getCor(self, linha, coluna):
+        if not(self.posicoes[linha][coluna].ocupada()):
+            return 2
+        elif self.posicoes[linha][coluna].getOcupante() == self.player1:
+            return 0
+        else:
+            return 1
+    
+    def getVencedor(self):
+        if self.player1.getVencedor():
+            return self.player1
+        else:
+            return self.player2
