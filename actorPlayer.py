@@ -1,5 +1,7 @@
 from tkinter import *
 from tkinter import ttk
+import tabuleiro
+import boardImage
  
 
 master = Tk()
@@ -11,7 +13,8 @@ class ActorPlayer:
     def __init__(self):
         self.mainWindow = Tk()
         self.fillMainWindow()
-        #self.mainWindow.mainloop()
+        self.myBoard = tabuleiro.Tabuleiro()
+        self.mainWindow.mainloop()
 
     def fillMainWindow(self):
         self.mainWindow.title("Talpa")
@@ -50,20 +53,25 @@ class ActorPlayer:
         self.mainFrame.grid(row=0, column=0)
         self.messageFrame.grid(row=1, column=0)
 
-        self.whiteTurn = True
-
     def click(self, event, linha, coluna):
-        label = self.boardView[linha-1][coluna-1]
-        if label['imag'] == 'pyimage2':
-            label['imag'] = self.empty
-            self.whiteTurn = False
-        else:
-            label['imag'] = self.empty
-            self.whiteTurn = True
+        self.myBoard.procederLance(linha, coluna)
+        self.updateUserInterface()
 
-ttk.Button(master,
-             text ="Click to open a new window",
-             command = ActorPlayer).pack()
+    def updateUserInterface(self, linha, coluna):
+        novoEstado = self.myBoard.setMensagem()
+        self.labelMessage['text'] = novoEstado.getMessage()
+        label = self.boardView[linha-1][coluna-1]
+        for y in range(8):
+            for x in range(8):
+                label = self.boardView[x][y]
+                value = novoEstado.getValue(x+1, y+1)
+                if label['imag'] == 'pyimage2':
+                    label['imag'] = self.empty
+                    self.whiteTurn = False
+                else:
+                    label['imag'] = self.empty
+                    self.whiteTurn = True
+
 
 mainloop()
 
