@@ -45,13 +45,11 @@ class Tabuleiro():
                     self.jogadaEmAndamento = False
                     self.posicoes[self.pecaRetirada[0]][self.pecaRetirada[1]].setOcupante(self.jogadorDaVez())
                 else:
-                    print("Doidera")
                     self.posicoes[linha][coluna].setOcupante(self.jogadorDaVez())
                     if self.VerificarVencedor():
                         self.setMensagem(2)
                         self.partidaEmAndamento = False
                     else:
-                        print("locuucra")
                         self.jogadaEmAndamento = False
                         self.player1.inverteTurno()
                         self.player2.inverteTurno()
@@ -116,7 +114,6 @@ class Tabuleiro():
             matrizAuxiliar.append([0,0,0,0,0,0,0,0])
         for i in range(8):
             if not(self.posicoes[0][i].ocupada()):
-                print([0,i])
                 listaPosicoes.append([0, i])
         while(len(listaPosicoes) > 0):
             posicaoAtual = listaPosicoes.pop(0)
@@ -130,7 +127,6 @@ class Tabuleiro():
                         matrizAuxiliar[pos0][pos1] = 1
         for i in range(8):
             if matrizAuxiliar[7][i] == 1:
-                print("Vencedor1")
                 vencedor1 = True
                 break
         for i in range(8):
@@ -139,7 +135,6 @@ class Tabuleiro():
         listaPosicoes = []
         for i in range(8):
             if not(self.posicoes[i][0].ocupada()):
-                print([i, 0])
                 listaPosicoes.append([i, 0])
         while(len(listaPosicoes) > 0):
             posicaoAtual = listaPosicoes.pop(0)
@@ -153,7 +148,6 @@ class Tabuleiro():
                         matrizAuxiliar[pos0][pos1] = 1
         for i in range(8):
             if matrizAuxiliar[i][7] == 1:
-                print("Vencedor2")
                 vencedor2 = True
                 break
         

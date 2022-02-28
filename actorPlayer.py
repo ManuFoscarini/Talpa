@@ -53,7 +53,6 @@ class ActorPlayer:
         self.messageFrame.grid(row=1, column=0)
 
     def click(self, event, linha, coluna):
-        print([linha-1, coluna-1])
         self.tabuleiro.SelecionaPosicao(linha-1, coluna-1)
         self.updateUserInterface()
         '''
