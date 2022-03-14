@@ -41,7 +41,7 @@ class ActorPlayer:
                                    relief="solid", image=self.blue)
                 aLabel.grid(row=x, column=y)
                 aLabel.bind("<Button-1>", lambda event, line=x+1,
-                            column=y+1: self.SelecionaPosicao(event, line, column))
+                            column=y+1: self.SelecionaPosicao(line, column))
                 viewTier.append(aLabel)
 
             self.boardView.append(viewTier)
@@ -52,7 +52,7 @@ class ActorPlayer:
         self.mainFrame.grid(row=0, column=0)
         self.messageFrame.grid(row=1, column=0)
 
-    def SelecionaPosicao(self, event, linha, coluna):
+    def SelecionaPosicao(self, linha, coluna):
         self.tabuleiro.SelecionaPosicao(linha-1, coluna-1)
         self.updateUserInterface()
 

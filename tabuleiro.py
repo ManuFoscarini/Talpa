@@ -16,8 +16,8 @@ class Tabuleiro():
         self.pecaRetirada = None
     
     def SelecionaPosicao(self, linha, coluna):
-        if self.partidaEmAndamento:
-            self.procederLance(linha, coluna)
+        if self.getPartidaEmAndamento():
+            self.ProcederLance(linha, coluna)
         else:
            self.ColocarJogoEstadoInicial()
     
@@ -31,8 +31,6 @@ class Tabuleiro():
                 else:
                     self.posicoes[linha][coluna].setOcupante(jogadorDaVez)
                     if self.VerificarVencedor():
-                        self.player1.setJogando(False) ###
-                        self.player2.setJogando(False) ###
                         self.setMensagem(2)
                         self.setPartidaEmAndamento(False)
                         self.vencedor = True
@@ -49,8 +47,6 @@ class Tabuleiro():
                 if self.impossivelComer():
                     self.posicoes[linha][coluna].setOcupante(None)
                     if self.VerificarVencedor():
-                        self.player1.setJogando(False) ###
-                        self.player2.setJogando(False) ###
                         self.setMensagem(2)
                         self.setPartidaEmAndamento(False)
                         self.vencedor = True
@@ -65,17 +61,21 @@ class Tabuleiro():
             else:
                 self.setMensagem(1)
 
-    def ColocarJogoEstadoInicial(self):
+    def ColocarJogoEstadoInicial(self):#
         self.colocaPosicoesEstadoInicial()
         self.setPartidaEmAndamento(True)
         self.setJogadaEmAndamento(False)
         self.setMensagem(0)
-        self.player1.setJogando(True) ####
-        self.player2.setJogando(True) ####
-        self.player1.setTurno(True)
-        self.player2.setTurno(False)
+        turno1 = self.player1.getTurno()
+        turno2 = self.player2.getTurno()
+        if not(turno1): ####
+            self.player1.inverteTurno()
+        if turno2:      ####
+            self.player2.inverteTurno()
         self.player1.setVencedor(False)
         self.player2.setVencedor(False)
+        self.player1.setJogando(True) ####
+        self.player2.setJogando(True) ####
         self.vencedor = False
         
     def colocaPosicoesEstadoInicial(self):
@@ -167,6 +167,10 @@ class Tabuleiro():
             if matrizAuxiliar[i][7] == 1:
                 vencedor2 = True
                 break
+        
+        if vencedor1 or vencedor2:#
+            self.player1.setJogando(False)#
+            self.player2.setJogando(False)#
         
         if vencedor1 and vencedor2:
             if self.player1 == self.jogadorDaVez():
