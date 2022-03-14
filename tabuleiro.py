@@ -7,6 +7,7 @@ class Tabuleiro():
         self.player1 = Jogador("Azul", 0, True)
         self.player2 = Jogador("Vermelho", 1, False)
         self.posicoes = [[], [], [], [], [], [], [], []]
+        self.vencedor = False
         for i in range(8):
             for j in range(8):
                 self.posicoes[i].append(Posicao())
@@ -20,52 +21,62 @@ class Tabuleiro():
         else:
            self.ColocarJogoEstadoInicial()
     
-    def procederLance(self, linha, coluna):
-        if not(self.jogadaEmAndamento):
+    def ProcederLance(self, linha, coluna):
+        jogadorDaVez = self.jogadorDaVez()
+        if self.getJogadaEmAndamento():
+            if self.adjacente(linha, coluna):
+                if self.mesmaCor(linha, coluna) or not(self.posicoes[linha][coluna].ocupada()):#
+                    self.setJogadaEmAndamento(False)
+                    self.posicoes[self.pecaRetirada[0]][self.pecaRetirada[1]].setOcupante(jogadorDaVez)
+                else:
+                    self.posicoes[linha][coluna].setOcupante(jogadorDaVez)
+                    if self.VerificarVencedor():
+                        self.player1.setJogando(False) ###
+                        self.player2.setJogando(False) ###
+                        self.setMensagem(2)
+                        self.setPartidaEmAndamento(False)
+                        self.vencedor = True
+                    else:
+                        self.setJogadaEmAndamento(False)
+                        self.player1.inverteTurno()
+                        self.player2.inverteTurno()
+            else:
+                self.setJogadaEmAndamento(False)
+                self.posicoes[self.pecaRetirada[0]][self.pecaRetirada[1]].setOcupante(jogadorDaVez)
+        else:
             if self.mesmaCor(linha, coluna):
                 self.setMensagem(0)
                 if self.impossivelComer():
-                    self.retiraPeca(linha, coluna)
+                    self.posicoes[linha][coluna].setOcupante(None)
                     if self.VerificarVencedor():
+                        self.player1.setJogando(False) ###
+                        self.player2.setJogando(False) ###
                         self.setMensagem(2)
-                        self.partidaEmAndamento = False
+                        self.setPartidaEmAndamento(False)
+                        self.vencedor = True
                     else:
                         self.player1.inverteTurno()
                         self.player2.inverteTurno()
                 else:
-                    self.retiraPeca(linha, coluna)
+                    self.posicoes[linha][coluna].setOcupante(None)
                     self.pecaRetirada = [linha, coluna]
-                    self.jogadaEmAndamento = True
+                    self.setJogadaEmAndamento(True)
 
             else:
                 self.setMensagem(1)
-        else:
-            if self.adjacente(linha, coluna):
-                if self.mesmaCor(linha, coluna):
-                    self.jogadaEmAndamento = False
-                    self.posicoes[self.pecaRetirada[0]][self.pecaRetirada[1]].setOcupante(self.jogadorDaVez())
-                else:
-                    self.posicoes[linha][coluna].setOcupante(self.jogadorDaVez())
-                    if self.VerificarVencedor():
-                        self.setMensagem(2)
-                        self.partidaEmAndamento = False
-                    else:
-                        self.jogadaEmAndamento = False
-                        self.player1.inverteTurno()
-                        self.player2.inverteTurno()
-            else:
-                self.jogadaEmAndamento = False
-                self.posicoes[self.pecaRetirada[0]][self.pecaRetirada[1]].setOcupante(self.jogadorDaVez())
 
     def ColocarJogoEstadoInicial(self):
         self.colocaPosicoesEstadoInicial()
         self.setPartidaEmAndamento(True)
         self.setJogadaEmAndamento(False)
         self.setMensagem(0)
+        self.player1.setJogando(True) ####
+        self.player2.setJogando(True) ####
         self.player1.setTurno(True)
         self.player2.setTurno(False)
         self.player1.setVencedor(False)
         self.player2.setVencedor(False)
+        self.vencedor = False
         
     def colocaPosicoesEstadoInicial(self):
         for i in range(8):
@@ -77,9 +88,15 @@ class Tabuleiro():
 
     def setPartidaEmAndamento(self, valor):
         self.partidaEmAndamento = valor
+    
+    def getPartidaEmAndamento(self):
+        return self.partidaEmAndamento
 
     def setJogadaEmAndamento(self, valor):
         self.jogadaEmAndamento = valor
+    
+    def getJogadaEmAndamento(self):
+        return self.jogadaEmAndamento
     
     def setMensagem(self, codigo):
         if codigo == 0:
@@ -169,11 +186,11 @@ class Tabuleiro():
             for j in range(8):
                 posicaoAtual = [i, j]
                 adjacentes = [[posicaoAtual[0]-1, posicaoAtual[1]], [posicaoAtual[0]+1, posicaoAtual[1]], [posicaoAtual[0], posicaoAtual[1]-1],[posicaoAtual[0], posicaoAtual[1]+1]]
-                for i in range(4):
-                    pos0 = adjacentes[i][0]
-                    pos1 = adjacentes[i][1]
+                for k in range(4):
+                    pos0 = adjacentes[k][0]
+                    pos1 = adjacentes[k][1]
                     if  (0 <= pos0 <= 7) and (0 <= pos1 <= 7):
-                        if (self.posicoes[pos0][pos1].ocupada() and self.posicoes[pos0][pos1] != self.jogadorDaVez()):
+                        if (self.posicoes[pos0][pos1].ocupada() and self.posicoes[i][j].ocupada() and self.posicoes[pos0][pos1].getOcupante() != self.posicoes[i][j].getOcupante()): 
                             return False
         return True
 

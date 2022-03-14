@@ -41,7 +41,7 @@ class ActorPlayer:
                                    relief="solid", image=self.blue)
                 aLabel.grid(row=x, column=y)
                 aLabel.bind("<Button-1>", lambda event, line=x+1,
-                            column=y+1: self.click(event, line, column))
+                            column=y+1: self.SelecionaPosicao(event, line, column))
                 viewTier.append(aLabel)
 
             self.boardView.append(viewTier)
@@ -52,18 +52,11 @@ class ActorPlayer:
         self.mainFrame.grid(row=0, column=0)
         self.messageFrame.grid(row=1, column=0)
 
-    def click(self, event, linha, coluna):
+    def SelecionaPosicao(self, event, linha, coluna):
         self.tabuleiro.SelecionaPosicao(linha-1, coluna-1)
         self.updateUserInterface()
-        '''
-        label = self.boardView[linha-1][coluna-1]
-        if label['imag'] == 'pyimage2':
-            label['imag'] = self.empty
-            self.whiteTurn = False
-        else:
-            label['imag'] = self.empty
-            self.whiteTurn = True
-        '''
+
+
     def updateUserInterface(self):
         self.labelMessage['text'] = self.tabuleiro.getMensagem()
         for i in range(8):
@@ -77,11 +70,6 @@ class ActorPlayer:
                 elif cor == 2:
                     label['imag'] = self.empty
 
-#ttk.Button(master,
-            # text ="Click to open a new window",
-            # command = ActorPlayer).pack()
-
-#mainloop()
 
 ActorPlayer()
 
