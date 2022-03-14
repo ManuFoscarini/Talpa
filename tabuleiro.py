@@ -119,9 +119,6 @@ class Tabuleiro():
         else:
             return self.player2
     
-    def retiraPeca(self, linha, coluna):
-        self.posicoes[linha][coluna].setOcupante(None)
-    
     def VerificarVencedor(self):
         vencedor1 = False
         vencedor2 = False
