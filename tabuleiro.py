@@ -142,14 +142,16 @@ class Tabuleiro():
         for i in range(8):
             if matrizAuxiliar[7][i] == 1:
                 vencedor1 = True
-                break
+
         for i in range(8):
             for j in range(8):
                 matrizAuxiliar[i][j] = 0
+
         listaPosicoes = []
         for i in range(8):
             if not(self.posicoes[i][0].ocupada()):
                 listaPosicoes.append([i, 0])
+
         while(len(listaPosicoes) > 0):
             posicaoAtual = listaPosicoes.pop(0)
             adjacentes = [[posicaoAtual[0]-1, posicaoAtual[1]], [posicaoAtual[0]+1, posicaoAtual[1]], [posicaoAtual[0], posicaoAtual[1]-1],[posicaoAtual[0], posicaoAtual[1]+1]]
@@ -163,7 +165,6 @@ class Tabuleiro():
         for i in range(8):
             if matrizAuxiliar[i][7] == 1:
                 vencedor2 = True
-                break
         
         if vencedor1 or vencedor2:#
             self.player1.setJogando(False)#
